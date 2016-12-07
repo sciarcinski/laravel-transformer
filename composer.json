@@ -1,0 +1,21 @@
+{
+    "name": "sciarcinski/laravel-transformer",
+    "description": "Laravel eloquent models transformers",
+    "keywords": ["transformers", "API", "JSON", "laravel 5"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sławomir Ciarciński",
+            "email": "slawgos@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sciarcinski\\LaravelTransformer\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
