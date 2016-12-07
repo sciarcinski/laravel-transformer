@@ -10,5 +10,5 @@ interface TransformerContract
     
     public function transforms($object);
     
-    public function transform($object, $empty = false);
+    public function transform($object);
 }

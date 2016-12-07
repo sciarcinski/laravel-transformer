@@ -2,11 +2,12 @@
 
 namespace Sciarcinski\LaravelTransformer;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use LaravelTransformer\Contracts\TransformerContract;
+use Sciarcinski\LaravelTransformer\Contracts\TransformerContract;
 
 abstract class AbstractTransformer implements TransformerContract
 {
@@ -56,27 +57,57 @@ abstract class AbstractTransformer implements TransformerContract
         }
         
         switch (true) {
-            // array
             case is_array($object):
-                $transforms = array_map(function ($object) {
-                    return $this->transform($object);
-                }, $object);
+                $transforms = $this->transformsArray($object);
                 break;
             
-            // collection
             case ($object instanceof Collection):
-                $transforms = $object->map(function ($item) {
-                    return $this->transform($item);
-                })->all();
+                $transforms = $this->transformsCollection($object);
                 break;
             
-            // model or default
             case ($object instanceof Model):
-            default:
                 $transforms =  $this->transform($object);
                 break;
         }
         
         $this->transform = $transforms;
+    }
+    
+    /**
+     * @param $item
+     *
+     * @return mixed
+     */
+    protected function transformClosure($item)
+    {
+        return $item;
+    }
+    
+    /**
+     * @param array $objects
+     *
+     * @return array
+     */
+    private function transformsArray(array $objects)
+    {
+        return array_map(function ($object) {
+            $this->transformClosure($object);
+
+            return $this->transform($object);
+        }, $objects);
+    }
+    
+    /**
+     * @param Collection $objects
+     *
+     * @return array
+     */
+    private function transformsCollection(Collection $objects)
+    {
+        return $objects->map(function ($item) {
+            $this->transformClosure($item);
+
+            return $this->transform($item);
+        })->all();
     }
 }
