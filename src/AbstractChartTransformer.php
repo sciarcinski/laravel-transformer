@@ -72,6 +72,7 @@ abstract class AbstractChartTransformer extends AbstractTransformer implements C
     {
         $start = clone $this->date_start;
         $end = clone $this->date_end;
+        $end->addDay();
         
         if ($start > $end) {
             throw new Exception('Incorrect date');
@@ -116,13 +117,6 @@ abstract class AbstractChartTransformer extends AbstractTransformer implements C
         ];
         
         $this->transform = $transforms;
-    }
-    
-    /**
-     * @param $object
-     */
-    public function label($object)
-    {
     }
     
     /**
