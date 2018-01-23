@@ -2,7 +2,6 @@
 
 namespace Sciarcinski\LaravelTransformer;
 
-use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +10,7 @@ use Sciarcinski\LaravelTransformer\Contracts\TransformerContract;
 
 abstract class AbstractTransformer implements TransformerContract
 {
+    /** @var array */
     protected $transform;
     
     /** @var Request */
@@ -31,11 +31,21 @@ abstract class AbstractTransformer implements TransformerContract
     {
         return $this->transform;
     }
-    
+
     /**
-     * @param $object
-     * @param $code
-     *
+     * @param mixed $object
+     * @return array
+     */
+    public function toArray($object)
+    {
+        $this->transforms($object);
+
+        return $this->get();
+    }
+
+    /**
+     * @param mixed $object
+     * @param int $code
      * @return JsonResponse
      */
     public function toJson($object, $code = 200)
@@ -47,7 +57,6 @@ abstract class AbstractTransformer implements TransformerContract
 
     /**
      * @param mixed $object
-     *
      * @return array
      */
     public function transforms($object)
@@ -66,16 +75,17 @@ abstract class AbstractTransformer implements TransformerContract
                 break;
             
             case ($object instanceof Model):
-                $transforms =  $this->transform($object);
+                $transforms = $this->transform($object);
                 break;
         }
         
         $this->transform = $transforms;
+
+        return $this;
     }
     
     /**
      * @param $item
-     *
      * @return mixed
      */
     protected function transformClosure($item)
@@ -85,7 +95,6 @@ abstract class AbstractTransformer implements TransformerContract
     
     /**
      * @param array $objects
-     *
      * @return array
      */
     private function transformsArray(array $objects)
@@ -99,7 +108,6 @@ abstract class AbstractTransformer implements TransformerContract
     
     /**
      * @param Collection $objects
-     *
      * @return array
      */
     private function transformsCollection(Collection $objects)
