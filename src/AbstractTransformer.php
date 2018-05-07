@@ -62,7 +62,7 @@ abstract class AbstractTransformer implements TransformerContract
     public function transforms($object)
     {
         if (is_null($object)) {
-            $transforms = [];
+            $transforms = $this->transformEmpty();
         }
         
         switch (true) {
@@ -83,7 +83,15 @@ abstract class AbstractTransformer implements TransformerContract
 
         return $this;
     }
-    
+
+    /**
+     * @return array
+     */
+    protected function transformEmpty()
+    {
+        return [];
+    }
+
     /**
      * @param $item
      * @return mixed
