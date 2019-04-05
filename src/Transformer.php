@@ -2,27 +2,17 @@
 
 namespace Sciarcinski\LaravelTransformer;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Sciarcinski\LaravelTransformer\Contracts\TransformerContract;
 
-abstract class AbstractTransformer implements TransformerContract
+abstract class Transformer implements TransformerContract
 {
     /** @var array */
     protected $transform;
-    
-    /** @var Request */
-    protected $request;
 
-    /**
-     * @param Request $request
-     */
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
+    protected $only = [];
 
     /**
      * @return array
@@ -51,35 +41,43 @@ abstract class AbstractTransformer implements TransformerContract
     public function toJson($object, $code = 200)
     {
         $this->transforms($object);
-        
+
         return new JsonResponse($this->get(), $code);
     }
 
     /**
+     * @param array $columns
+     * @return $this
+     */
+    public function only(array $columns)
+    {
+        $this->only = $columns;
+        return $this;
+    }
+
+    /**
      * @param mixed $object
-     * @return array
+     * @return $this
      */
     public function transforms($object)
     {
         if (is_null($object)) {
-            $transforms = $this->transformEmpty();
+            $this->transform = $this->transformEmpty();
         }
-        
+
         switch (true) {
             case is_array($object):
-                $transforms = $this->transformsArray($object);
+                $this->transform = $this->transformsArray($object);
                 break;
-            
+
             case ($object instanceof Collection):
-                $transforms = $this->transformsCollection($object);
+                $this->transform = $this->transformsCollection($object);
                 break;
-            
+
             case ($object instanceof Model):
-                $transforms = $this->transform($object);
+                $this->transform = $this->transform($object);
                 break;
         }
-        
-        $this->transform = $transforms;
 
         return $this;
     }
@@ -100,7 +98,7 @@ abstract class AbstractTransformer implements TransformerContract
     {
         return $item;
     }
-    
+
     /**
      * @param array $objects
      * @return array
@@ -113,7 +111,7 @@ abstract class AbstractTransformer implements TransformerContract
             return $this->transform($object);
         }, $objects);
     }
-    
+
     /**
      * @param Collection $objects
      * @return array

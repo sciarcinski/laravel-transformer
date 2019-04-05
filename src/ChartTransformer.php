@@ -6,7 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use Sciarcinski\LaravelTransformer\Contracts\ChartTransformerContract;
 
-abstract class AbstractChartTransformer extends AbstractTransformer implements ChartTransformerContract
+abstract class ChartTransformer extends Transformer implements ChartTransformerContract
 {
     protected $labels = [];
     
