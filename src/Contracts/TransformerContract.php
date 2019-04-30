@@ -2,31 +2,25 @@
 
 namespace Sciarcinski\LaravelTransformer\Contracts;
 
+use Sciarcinski\LaravelTransformer\Transformer;
+
 interface TransformerContract
 {
     /**
-     * @return array
+     * @param mixed $items
+     * @return Transformer
      */
-    public function get();
+    public function set($items);
 
     /**
-     * @param mixed $object
      * @return array
      */
-    public function toArray($object);
+    public function toArray();
 
     /**
-     * @param mixed $object
-     * @param int $code
-     * @return JsonResponse
+     * @return string
      */
-    public function toJson($object, $code = 200);
-
-    /**
-     * @param mixed $object
-     * @return array
-     */
-    public function transforms($object);
+    public function toJson();
 
     /**
      * @param mixed $object

@@ -2,7 +2,6 @@
 
 namespace Sciarcinski\LaravelTransformer;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Sciarcinski\LaravelTransformer\Contracts\TransformerContract;
@@ -10,56 +9,50 @@ use Sciarcinski\LaravelTransformer\Contracts\TransformerContract;
 abstract class Transformer implements TransformerContract
 {
     /** @var array */
-    protected $transform;
+    protected $transform = [];
 
-    protected $only = [];
+    /**
+     * @param mixed $items
+     */
+    public function __construct($items = null)
+    {
+        if (!is_null($items)) {
+            $this->set($items);
+        }
+    }
+
+    /**
+     * @param mixed $items
+     * @return $this
+     */
+    public function set($items)
+    {
+        $this->transform($items);
+
+        return $this;
+    }
 
     /**
      * @return array
      */
-    public function get()
+    public function toArray()
     {
         return $this->transform;
     }
 
     /**
-     * @param mixed $object
-     * @return array
+     * @return string
      */
-    public function toArray($object)
+    public function toJson()
     {
-        $this->transforms($object);
-
-        return $this->get();
-    }
-
-    /**
-     * @param mixed $object
-     * @param int $code
-     * @return JsonResponse
-     */
-    public function toJson($object, $code = 200)
-    {
-        $this->transforms($object);
-
-        return new JsonResponse($this->get(), $code);
-    }
-
-    /**
-     * @param array $columns
-     * @return $this
-     */
-    public function only(array $columns)
-    {
-        $this->only = $columns;
-        return $this;
+        return json_encode($this->transform);
     }
 
     /**
      * @param mixed $object
      * @return $this
      */
-    public function transforms($object)
+    protected function transforms($object)
     {
         if (is_null($object)) {
             $this->transform = $this->transformEmpty();
