@@ -27,7 +27,7 @@ abstract class Transformer implements TransformerContract
      */
     public function set($items)
     {
-        $this->transform($items);
+        $this->transforms($items);
 
         return $this;
     }
