@@ -113,11 +113,11 @@ abstract class Transformer implements TransformerContract
      */
     private function transformsCollection($objects)
     {
-        $objects->each(function ($item) {
+        $objects->transform(function ($item) {
             $this->transformClosure($item);
 
             return $this->transform($item);
-        });
+        })->toArray();
 
         return $objects->toArray();
     }
