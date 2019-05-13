@@ -5,6 +5,7 @@ namespace Sciarcinski\LaravelTransformer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Sciarcinski\LaravelTransformer\Contracts\TransformerContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 abstract class Transformer implements TransformerContract
 {
@@ -63,6 +64,7 @@ abstract class Transformer implements TransformerContract
                 $this->transform = $this->transformsArray($object);
                 break;
 
+            case ($object instanceof LengthAwarePaginator):
             case ($object instanceof Collection):
                 $this->transform = $this->transformsCollection($object);
                 break;
@@ -106,15 +108,17 @@ abstract class Transformer implements TransformerContract
     }
 
     /**
-     * @param Collection $objects
+     * @param Collection|LengthAwarePaginator $objects
      * @return array
      */
-    private function transformsCollection(Collection $objects)
+    private function transformsCollection($objects)
     {
-        return $objects->map(function ($item) {
+        $objects->each(function ($item) {
             $this->transformClosure($item);
 
             return $this->transform($item);
-        })->all();
+        });
+
+        return $objects->toArray();
     }
 }
