@@ -50,6 +50,18 @@ abstract class Transformer implements TransformerContract
     }
 
     /**
+     * @param string $transform
+     * @param mixed $object
+     * @return array|TransformerContract
+     */
+    protected function transformWith($transform, $object)
+    {
+        $transform = new $transform($object);
+
+        return $transform instanceof TransformerContract ? $transform->toArray() : [];
+    }
+
+    /**
      * @param mixed $object
      * @return $this
      */
